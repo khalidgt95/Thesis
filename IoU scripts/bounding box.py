@@ -33,43 +33,20 @@ def generate_circles(starting_point_circle1, starting_point_circle2, radius_circ
 
 def calculate_distance_along_x_axis(starting_point_circle1, starting_point_circle2):
     
-    ## Euclidean distance 
-    distance = math.sqrt((starting_point_circle1[0]-starting_point_circle2[0])**2 + 
-               (starting_point_circle1[1]-starting_point_circle2[1])**2)
-    
-    return distance
+    return math.fabs(starting_point_circle1[0]-starting_point_circle2[0])
     
 def calculate_overlapping_area(radius_circle1, radius_circle2, starting_point_circle1
                                , starting_point_circle2):
     
     d = calculate_distance_along_x_axis(starting_point_circle1, starting_point_circle2)
-   
-    ## When the distance is greater than the sum of the radius of two circles, 
-    ## then the overlapping area becomes zero
-    if d > (radius_circle1 + radius_circle2):
-        print("distance : {} is greater than sum of radii : {}".format(d, radius_circle1+radius_circle2))
-        return 0.0
     
-    
-    ## This case is for when the circles are of unequal length. If the circle lies inside other circle, 
-    ## then do this
-    if (d + min(radius_circle1, radius_circle2)) < max(radius_circle1, radius_circle2):
-        print("One circle lies inside the other circle completely")
-        return calculate_circle_area(min(radius_circle1, radius_circle2))
-    
-    print("distance : {}".format(d))
     R = radius_circle1
     r = radius_circle2
     
-    print("block 1 {}".format((d**2 + r**2 - R**2) / (2 * d * r)))
-    print("block 2 {}".format((d**2 + R**2 - r**2) / (2 * d * R)))
-    ## Have to perform clipping here so that it doesnt exceed the bounds of inverse cos
     block1 = (r**2) * math.acos((d**2 + r**2 - R**2) / (2 * d * r))
-    print(((-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R)))
     block2 = (R**2) * math.acos((d**2 + R**2 - r**2) / (2 * d * R))
     block3 = 0.5 * (math.sqrt((-d+r+R)*(d+r-R)*(d-r+R)*(d+r+R)))
     
-    print(block3)
     area = block1 + block2 - block3
     
     return area
@@ -88,10 +65,10 @@ def IoU(radius_circle1, radius_circle2, overlapping_area):
 if __name__=="__main__":
     
     RADIUS_CIRCLE1 = 0.3
-    RADIUS_CIRCLE2 = 0.6
+    RADIUS_CIRCLE2 = 0.3
     
-    STARTING_POINT_CIRCLE1 = (0.3,0.3)
-    STARTING_POINT_CIRCLE2 = (0.3,0.3)
+    STARTING_POINT_CIRCLE1 = (0,0)
+    STARTING_POINT_CIRCLE2 = (0.1,0)
     
     generate_circles(starting_point_circle1=STARTING_POINT_CIRCLE1, starting_point_circle2=STARTING_POINT_CIRCLE2,
                      radius_circle1=RADIUS_CIRCLE1, radius_circle2=RADIUS_CIRCLE2)    
@@ -104,12 +81,7 @@ if __name__=="__main__":
     #
     # When I checked with the same centers
     # This area is the same as when I compute manually
-    print("Area of overlapping region : {}".format(area))
+    #print(area)
     
-    iou = IoU(RADIUS_CIRCLE1, RADIUS_CIRCLE2, area)
-    
-    print("IoU : {}".format(iou))
-    
-    # TODOs:
-    # Discuss about the possible cases where the circle are of different sizes and engulf one another
-    # Next steps
+    # 
+    print("IoU : {} ".format(IoU(RADIUS_CIRCLE1, RADIUS_CIRCLE2, area)))
