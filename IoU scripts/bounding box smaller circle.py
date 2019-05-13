@@ -9,7 +9,18 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 
-def plot_circles(circle1, circle2):
+def plot_circles(circle1, circle2, IoU_value):
+    
+    """
+    This function plots the circles and shows them to screen
+    
+    Parameters:
+    -----------
+    
+    circle1: Circle object of matplotlib
+    circle2: Circle object of matplotlib
+    IoU_value: IoU value
+    """
     
     fig = plt.gcf()
     ax = fig.gca()
@@ -17,19 +28,31 @@ def plot_circles(circle1, circle2):
     ax.add_artist(circle1)
     ax.add_artist(circle2)
     
+    ax.set_title("IoU : " + str(IoU_value))
+    
     return
 
 def generate_circles(starting_point_circle1, starting_point_circle2, radius_circle1, radius_circle2):
             
+    """
+    This function generates the circles and calls the function to plot them
+    
+    Parameters:
+    -----------
+    
+    starting_point_circle1:
+    starting_point_circle1:
+    radius_circle1:
+    radius_circle2:
+        
+    """
     circle1_coordinates = starting_point_circle1
     circle2_coordinates = starting_point_circle2    
     
     circle1 = plt.Circle(circle1_coordinates, radius=radius_circle1, color='blue', clip_on=False,alpha=0.5)
-    circle2 = plt.Circle(circle2_coordinates, radius=radius_circle2, color='g', clip_on=False,alpha=0.5)
+    circle2 = plt.Circle(circle2_coordinates, radius=radius_circle2, color='g', clip_on=False,alpha=0.5)    
     
-    plot_circles(circle1, circle2)    
-    
-    return 
+    return circle1, circle2
 
 def calculate_distance_along_x_axis(starting_point_circle1, starting_point_circle2):
     
@@ -46,6 +69,7 @@ def calculate_overlapping_area(radius_circle1, radius_circle2, starting_point_ci
    
     ## When the distance is greater than the sum of the radius of two circles, 
     ## then the overlapping area becomes zero
+    ## This case is for when the two circles do not overlap at all
     if d > (radius_circle1 + radius_circle2):
         print("distance : {} is greater than sum of radii : {}".format(d, radius_circle1+radius_circle2))
         return 0.0
@@ -87,13 +111,13 @@ def IoU(radius_circle1, radius_circle2, overlapping_area):
 
 if __name__=="__main__":
     
-    RADIUS_CIRCLE1 = 0.3
-    RADIUS_CIRCLE2 = 0.6
+    RADIUS_CIRCLE1 = 0.2
+    RADIUS_CIRCLE2 = 0.2
+
+    STARTING_POINT_CIRCLE1 = (0.2,0.5)
+    STARTING_POINT_CIRCLE2 = (0.7,0.5)
     
-    STARTING_POINT_CIRCLE1 = (0.3,0.3)
-    STARTING_POINT_CIRCLE2 = (0.3,0.3)
-    
-    generate_circles(starting_point_circle1=STARTING_POINT_CIRCLE1, starting_point_circle2=STARTING_POINT_CIRCLE2,
+    circle1, circle2 = generate_circles(starting_point_circle1=STARTING_POINT_CIRCLE1, starting_point_circle2=STARTING_POINT_CIRCLE2,
                      radius_circle1=RADIUS_CIRCLE1, radius_circle2=RADIUS_CIRCLE2)    
     
     area = calculate_overlapping_area(RADIUS_CIRCLE1, RADIUS_CIRCLE2, STARTING_POINT_CIRCLE1, 
@@ -107,6 +131,8 @@ if __name__=="__main__":
     print("Area of overlapping region : {}".format(area))
     
     iou = IoU(RADIUS_CIRCLE1, RADIUS_CIRCLE2, area)
+    
+    plot_circles(circle1, circle2, iou)
     
     print("IoU : {}".format(iou))
     

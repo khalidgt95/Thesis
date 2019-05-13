@@ -9,13 +9,15 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 
-def plot_circles(circle1, circle2):
+def plot_circles(circle1, circle2, IoU_value):
     
     fig = plt.gcf()
     ax = fig.gca()
 
     ax.add_artist(circle1)
     ax.add_artist(circle2)
+    
+    ax.set_title("IoU : " + str(IoU_value))
     
     return
 
@@ -27,9 +29,7 @@ def generate_circles(starting_point_circle1, starting_point_circle2, radius_circ
     circle1 = plt.Circle(circle1_coordinates, radius=radius_circle1, color='blue', clip_on=False,alpha=0.5)
     circle2 = plt.Circle(circle2_coordinates, radius=radius_circle2, color='g', clip_on=False,alpha=0.5)
     
-    plot_circles(circle1, circle2)    
-    
-    return 
+    return circle1, circle2
 
 def calculate_distance_along_x_axis(starting_point_circle1, starting_point_circle2):
     
@@ -67,10 +67,10 @@ if __name__=="__main__":
     RADIUS_CIRCLE1 = 0.3
     RADIUS_CIRCLE2 = 0.3
     
-    STARTING_POINT_CIRCLE1 = (0,0)
+    STARTING_POINT_CIRCLE1 = (1,0)
     STARTING_POINT_CIRCLE2 = (0.1,0)
     
-    generate_circles(starting_point_circle1=STARTING_POINT_CIRCLE1, starting_point_circle2=STARTING_POINT_CIRCLE2,
+    circle1, circle2 = generate_circles(starting_point_circle1=STARTING_POINT_CIRCLE1, starting_point_circle2=STARTING_POINT_CIRCLE2,
                      radius_circle1=RADIUS_CIRCLE1, radius_circle2=RADIUS_CIRCLE2)    
     
     area = calculate_overlapping_area(RADIUS_CIRCLE1, RADIUS_CIRCLE2, STARTING_POINT_CIRCLE1, 
@@ -82,6 +82,12 @@ if __name__=="__main__":
     # When I checked with the same centers
     # This area is the same as when I compute manually
     #print(area)
+    IoU_value = IoU(RADIUS_CIRCLE1, RADIUS_CIRCLE2, area)
     
+    plot_circles(circle1, circle2, IoU_value)
     # 
-    print("IoU : {} ".format(IoU(RADIUS_CIRCLE1, RADIUS_CIRCLE2, area)))
+    print("IoU : {} ".format(IoU_value))
+    
+    
+    
+    
