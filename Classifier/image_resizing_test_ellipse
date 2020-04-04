@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Sep 26 00:19:59 2019
+
+@author: khalid
+"""
+
+import numpy as np
+import cv2
+import math
+
+from keras_frcnn.simple_parser import get_data
+
+all_imgs, classes_count, class_mapping = get_data("annotate_ellipse.txt")
+
+gta = np.zeros((4), dtype="int")
+
+resized_width = 800
+resized_height = 600
+width = 640
+height = 480
+
+for image_num in range(5):
+
+    img = cv2.imread(all_imgs[image_num]["filepath"])
+    x_img = cv2.resize(img, (800, 600), interpolation=cv2.INTER_CUBIC)
+    
+    for bbox_num in range(len(all_imgs[image_num]["bboxes"])):
+        gta[0] = all_imgs[image_num]["bboxes"][bbox_num]["x"] * (resized_width / float(width))  # this is equal to 800/640
+        gta[1] = all_imgs[image_num]["bboxes"][bbox_num]['y'] * (resized_width / float(width))
+        gta[2] = all_imgs[image_num]["bboxes"][bbox_num]['x_axis'] * (resized_height / float(height))  # 600/480
+        gta[3] = all_imgs[image_num]["bboxes"][bbox_num]['y_axis'] * (resized_height / float(height))
+        
+        
+        cv2.ellipse(x_img, (gta[0], gta[1]), (gta[2], gta[3]), 0,0,360, (0,0,255), 1)
+
+        cv2.ellipse(img, (all_imgs[image_num]["bboxes"][bbox_num]["x"], all_imgs[image_num]["bboxes"][bbox_num]["y"]), 
+                      (all_imgs[image_num]["bboxes"][bbox_num]["x_axis"], all_imgs[image_num]["bboxes"][bbox_num]["y_axis"]), 0,0,360, (0,0,255), 1)
+
+    cv2.imshow("original", img)
+    cv2.imshow("enlarged", x_img)
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+    
+    
+
+
+
